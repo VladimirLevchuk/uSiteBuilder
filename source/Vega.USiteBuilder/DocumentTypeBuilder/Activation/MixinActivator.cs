@@ -1,4 +1,5 @@
 using System;
+using umbraco.NodeFactory;
 
 namespace Vega.USiteBuilder
 {
@@ -11,9 +12,16 @@ namespace Vega.USiteBuilder
 
         public static MixinActivator Current { get; set; }
 
-        public virtual object CreateInstance(Type mixinType)
+        /// <summary>
+        /// Creates an instance of mixin. 
+        /// </summary>
+        /// <param name="mixinType">Mixin type</param>
+        /// <param name="node">node is necessary to lazy load values from (for virtual properties). </param>
+        /// <returns></returns>
+        public virtual MixinBase CreateInstance(Type mixinType, Node node)
         {
-            var result = System.Activator.CreateInstance(mixinType);
+            var result = (MixinBase) DocumentTypeResolver.Instance.Activator.CreateInstance(mixinType);
+            result.Source = node;
             return result;
         }
     }
