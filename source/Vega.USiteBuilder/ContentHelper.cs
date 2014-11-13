@@ -535,12 +535,12 @@ namespace Vega.USiteBuilder
             return path.Contains(string.Format(",{0},", Constants.UmbracoRecycleBinId));
         }
 
-        internal static object GetMixinValue(Node node, PropertyInfo propInfo)
+        internal static MixinBase GetMixinValue(Node node, PropertyInfo propInfo)
         {
             var mixinAttribute = Util.GetAttribute<MixinPropertyAttribute>(propInfo);
             var mixinType = mixinAttribute.GetMixinType(propInfo);
             var mixin = MixinActivator.Current.CreateInstance(mixinType, node);
-            PopulateInstanceValues(node, mixinAttribute.GetMixinType(propInfo), mixin);
+            PopulateInstanceValues(node, mixinType, mixin);
             return mixin;
         }
 
@@ -563,7 +563,7 @@ namespace Vega.USiteBuilder
                     && (propInfo.GetGetMethod() != null && (!propInfo.GetGetMethod().IsVirtual || propInfo.GetGetMethod().IsFinal)))
                 {
                     var mixin = GetMixinValue(node, propInfo);
-                    propInfo.SetValue(typedObject, mixin);
+                    propInfo.SetValue(typedObject, mixin, null);
                     continue;
                 }
 
