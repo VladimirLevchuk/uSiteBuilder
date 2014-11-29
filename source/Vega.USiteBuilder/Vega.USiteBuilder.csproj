@@ -109,6 +109,7 @@
     <Compile Include="DocumentTypeBuilder\Activation\MixinActivator.cs" />
     <Compile Include="DocumentTypeBuilder\ContentComparison.cs" />
     <Compile Include="DocumentTypeBuilder\ContentTypeBase.cs" />
+    <Compile Include="DocumentTypeBuilder\Contracts\IDocumentTypeManager.cs" />
     <Compile Include="DocumentTypeBuilder\DocumentTypeAttribute.cs" />
     <Compile Include="DocumentTypeBuilder\DocumentTypeBase.cs" />
     <Compile Include="DocumentTypeBuilder\DocumentTypeComparer.cs" />
