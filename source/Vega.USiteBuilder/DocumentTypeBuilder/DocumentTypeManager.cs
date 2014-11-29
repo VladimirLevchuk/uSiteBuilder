@@ -272,7 +272,7 @@ namespace Vega.USiteBuilder
         }
 
 
-        private void SynchronizeDocumentType(Type typeDocType, Type baseTypeDocType)
+        internal void SynchronizeDocumentType(Type typeDocType, Type baseTypeDocType)
         {
             // Get DocumentTypeAttribute attribute for typeDocType
             DocumentTypeAttribute docTypeAttr = GetDocumentTypeAttribute(typeDocType);
@@ -516,6 +516,19 @@ namespace Vega.USiteBuilder
 
             // Create list of allowable children using "AllowedChildNodeTypes" property and add additional children retrieved in previous method
             SynchronizeAllowedChildContentTypes(baseTypeDocType, parentsToUpdate);
+        }
+
+        internal void SynchronizeChildNodesFor(Type docType)
+        {
+            Dictionary<int, List<ContentTypeSort>> parentsToUpdate = new Dictionary<int, List<ContentTypeSort>>();
+
+            GetAllowableParents(docType, parentsToUpdate);
+            
+            SynchronizeAllowedChildContentType(docType, parentsToUpdate);
+
+            // process all children document types
+            SynchronizeAllowedChildContentTypes(docType, parentsToUpdate);
+
         }
 
         private void SynchronizeAllowedChildContentTypes(Type baseTypeDocType, Dictionary<int, List<ContentTypeSort>> parents)
