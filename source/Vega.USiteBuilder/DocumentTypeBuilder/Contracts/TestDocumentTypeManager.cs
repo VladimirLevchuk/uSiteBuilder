@@ -1,50 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Vega.USiteBuilder.DocumentTypeBuilder.Contracts
 {
     /// <summary>
-    /// Manages document types synchronization
-    /// </summary>
-    public interface IDocumentTypeManager
-    {
-        /// <summary>
-        /// Synchronizes types
-        /// </summary>
-        /// <param name="types"></param>
-        void SynchronizeDocumentTypes(IEnumerable<Type> types);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        void SynchronizeDocumentType(Type type);
-    }
-
-    /// <summary>
     /// Default IDocumentTypeManager implementation
     /// </summary>
-    public class DocumentTypeManager : IDocumentTypeManager
+    public class TestDocumentTypeManager : ITestDocumentTypeManager
     {
         private USiteBuilder.DocumentTypeManager _manager;
 
         /// <summary>
         /// Default Constructor
         /// </summary>
-        public DocumentTypeManager()
+        public TestDocumentTypeManager()
         {
             _manager = new Vega.USiteBuilder.DocumentTypeManager();
         }
 
         public virtual void SynchronizeDocumentTypes(IEnumerable<Type> types)
         {
-            foreach (var type in types)
+            var syncTypes = types.ToList();
+
+            _manager.ClearSyncData();
+
+            // todo: make comparison more clever
+            var newTypes = syncTypes.Select(x => new ContentComparison
+            {
+                DocumentTypeStatus = Status.New,
+                Alias = GetAlias(x),
+                ParentAlias = GetAlias(GetBaseType(x))
+            }).ToList();
+
+            _manager.RegisterChanges(newTypes);
+
+            foreach (var type in syncTypes)
             {
                 SynchronizeDocumentType(type);
             }
+        }
+
+        protected virtual string GetAlias(Type type)
+        {
+            if (type == null)
+            {
+                return string.Empty;
+            }
+
+            return DocumentTypeManager.GetDocumentTypeAlias(type);
         }
 
         public virtual void SynchronizeDocumentType(Type type)

@@ -41,16 +41,24 @@ namespace Vega.USiteBuilder
             return DocumentTypes.Count > 0;
         }
 
+        internal void ClearSyncData()
+        {
+            DocumentTypes.Clear();
+            DocumentTypesId.Clear();
+            DocumentTypesComparisonSummary.Clear();
+        }
+
+        internal void RegisterChanges(List<ContentComparison> changes)
+        {
+            DocumentTypesComparisonSummary = changes;
+        }
+
         /// <summary>
         /// Main mathod for synchronizing document types
         /// </summary>
         public void Synchronize()
         {
-            DocumentTypes.Clear();
-            DocumentTypesId.Clear();
-            DocumentTypesComparisonSummary.Clear();
-
-
+            ClearSyncData();
 #if DEBUG
             Stopwatch timer = new Stopwatch();
             timer.Start();
