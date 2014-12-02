@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System.Configuration;
+using System.Web;
 using System.Xml;
 using Umbraco.Core;
 using Umbraco.Core.Models;
@@ -182,7 +183,10 @@ namespace Vega.USiteBuilder
                 }
             }
 
-            var referencedPaths = Directory.GetFiles(Path.Combine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin")), "*.dll");
+            var referencedPathSetting = ConfigurationManager.AppSettings["siteBuilderReferencedPath"] ?? "$(baseDir)\\bin";
+            var referencedPath = referencedPathSetting.Replace("$(baseDir)", AppDomain.CurrentDomain.BaseDirectory);
+            var referencedPaths = Directory.GetFiles(referencedPath, "*.dll");
+            //var referencedPaths = Directory.GetFiles(Path.Combine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin")), "*.dll");
             var toLoad = referencedPaths.Where(r => !loadedPaths.Contains(r, StringComparer.InvariantCultureIgnoreCase)).ToList();
             toLoad.ForEach(path => AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(path)));
         }
