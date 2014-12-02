@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Umbraco.Core.Models;
+using Umbraco.Core.Services;
 using umbraco.NodeFactory;
 
 namespace Vega.USiteBuilder.Repositories
@@ -15,6 +17,18 @@ namespace Vega.USiteBuilder.Repositories
         }
 
         public static IDocumentRepository Current { get; private set; }
+
+        private static readonly object SyncRoot = new object();
+
+        public static IDocumentRepository SetCurrent(IDocumentRepository repository)
+        {
+            lock (SyncRoot)
+            {
+                var result = Current;
+                Current = repository;
+                return result;
+            }
+        }
 
         protected INodeRepository NodeRepository { get; set; }
 
