@@ -100,27 +100,40 @@
         /// <returns>Output value (Xml representing related links)</returns>
         public object ConvertValueWhenWrite(object inputValue)
         {
-            string retVal = "<links>{0}</links>";
-
-            string linksXml = "";
-
-            if (inputValue != null)
+            if (!Util.IsUmbraco700OrHigher())
             {
-                List<RelatedLink> links = (List<RelatedLink>)inputValue;
+                string retVal = "<links>{0}</links>";
 
-                foreach (RelatedLink link in links)
+                string linksXml = "";
+
+                if (inputValue != null)
                 {
-                    linksXml += string.Format("<link title=\"{0}\" link=\"{1}\" type=\"{2}\" newwindow=\"{3}\" />",
-                        link.Title,
-                        link.Type == RelatedLink.RelatedLinkType.External ? link.Url : link.RelatedNodeId.ToString(),
-                        link.Type.ToString().ToLower(),
-                        link.NewWindow ? "1" : "0");
+                    List<RelatedLink> links = (List<RelatedLink>) inputValue;
+
+                    foreach (RelatedLink link in links)
+                    {
+                        linksXml += string.Format("<link title=\"{0}\" link=\"{1}\" type=\"{2}\" newwindow=\"{3}\" />",
+                            link.Title,
+                            link.Type == RelatedLink.RelatedLinkType.External ? link.Url : link.RelatedNodeId.ToString(),
+                            link.Type.ToString().ToLower(),
+                            link.NewWindow ? "1" : "0");
+                    }
                 }
+
+                retVal = string.Format(retVal, linksXml);
+
+                return retVal;
             }
+            else
+            {
+                if (inputValue == null)
+                {
+                    return null;
+                }
 
-            retVal = string.Format(retVal, linksXml);
-
-            return retVal;
+                var result = JsonConvert.SerializeObject(inputValue);
+                return result;
+            }
         }
 
         #endregion
